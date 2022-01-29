@@ -6,16 +6,15 @@ import {
   useBoolean,
   useOutsideClick,
 } from "@chakra-ui/react";
+import { ShoppingListItemSnapshot } from "libs/firestore";
 import { useRef } from "react";
 import { MdClose } from "react-icons/md";
 
 const Item = ({
-  name = "",
-  quantity = "",
+  item,
   onDelete = () => {},
 }: {
-  name?: string;
-  quantity?: string;
+  item: ShoppingListItemSnapshot;
   onDelete?: () => void;
 }): JSX.Element => {
   const itemRef = useRef<HTMLDivElement>(null);
@@ -39,10 +38,23 @@ const Item = ({
     >
       <Box>
         <Heading as='h3' fontSize='2xl' lineHeight='short'>
-          {name}
+          {item.data.name}
+
+          {item.data.urgent && (
+            <Text
+              as='span'
+              ml='3'
+              fontSize='sm'
+              color='red'
+              position='relative'
+              top={-1}
+            >
+              🚩
+            </Text>
+          )}
         </Heading>
         <Text fontSize='md' lineHeight='none' fontWeight='medium' opacity='0.8'>
-          {quantity}
+          {item.data.quantity}
         </Text>
       </Box>
       <Flex

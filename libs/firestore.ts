@@ -10,6 +10,7 @@ import {
   DocumentReference,
   deleteDoc,
   getDoc,
+  Timestamp,
 } from "firebase/firestore";
 import { useCollection } from "react-firebase-hooks/firestore";
 
@@ -31,6 +32,14 @@ export const collectionRef = collection(db, collectionName);
 export type ShoppingListItem = {
   name: string;
   quantity: string;
+  urgent: boolean;
+  createdAt: Timestamp;
+};
+
+export type ShoppingListItemSnapshot = {
+  id: string;
+  data: ShoppingListItem;
+  ref: DocumentReference<DocumentData>;
 };
 
 export const typeCast = (doc: QueryDocumentSnapshot) =>
@@ -45,24 +54,18 @@ export const useShoppingList = () => {
       ref: doc.ref,
     };
   });
-  return [data, loading] as [
-    (
-      | {
-          id: string;
-          data: ShoppingListItem;
-          ref: DocumentReference<DocumentData>;
-        }[]
-      | undefined
-    ),
-    boolean
-  ];
+  data?.sort(
+    (a, b) => a.data.createdAt.toMillis() - b.data.createdAt.toMillis()
+  );
+  return [data, loading] as [ShoppingListItemSnapshot[] | undefined, boolean];
 };
 
-export const createItem = async (item: ShoppingListItem) => {
+export const createItem = async (item: Omit<ShoppingListItem, "createdAt">) => {
   return await setDoc(doc(collectionRef), {
-    name: item.name,
-    quantity: item.quantity,
-    urgent: false,
+    ...item,
+    ...{
+      createdAt: Timestamp.now(),
+    },
   });
 };
 
