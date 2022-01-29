@@ -2,7 +2,9 @@
 
 ### Todo List:
 
+- [x] Urgency flag
+- [ ] Edit item
 - [ ] Authentication
-- [ ] Urgency flag
+- [ ] Shere by email address
 - [ ] Item suggestion
 - [ ] Quantity suggestion
