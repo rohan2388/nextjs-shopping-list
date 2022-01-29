@@ -18,7 +18,7 @@
       "components/*": [
         "./components/*"
       ],
-      "firestore": ["./firestore.ts"]
+      "libs/*": ["./libs/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

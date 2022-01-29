@@ -3,7 +3,7 @@ const path = require("path");
 
 const alias = {
   components: path.join(__dirname, "components"),
-  firestore: path.join(__dirname, "firestore.ts"),
+  libs: path.join(__dirname, "libs"),
 };
 
 const nextConfig = {

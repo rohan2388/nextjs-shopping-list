@@ -1,9 +1,10 @@
 import type { NextPage } from "next";
 import Appbar from "components/appbar";
-import { Box, Flex, Stack, Text } from "@chakra-ui/react";
+import { Box, Stack } from "@chakra-ui/react";
 import Item from "components/item";
 import MainForm from "components/mainForm";
-import { deleteItem, useShoppingList } from "firestore";
+import { deleteItem, useShoppingList } from "libs/firestore";
+import Message from "components/message";
 
 const Home: NextPage = () => {
   const [snapshots, loading] = useShoppingList();
@@ -27,16 +28,9 @@ const Home: NextPage = () => {
           })}
         </Stack>
       )}
-      {loading && (
-        <Flex
-          alignItems='center'
-          justifyContent='center'
-          h='50vh'
-          color='accent'
-        >
-          <Text>Loading...</Text>
-        </Flex>
-      )}
+
+      {!loading && snapshots?.length == 0 && <Message text='Empty list' />}
+      {loading && <Message text='Loading...' />}
 
       <MainForm />
     </Box>

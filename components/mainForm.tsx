@@ -6,7 +6,7 @@ import {
   useBoolean,
   useControllableState,
 } from "@chakra-ui/react";
-import { createItem } from "firestore";
+import { createItem } from "libs/firestore";
 import { useState } from "react";
 import { GoPlus } from "react-icons/go";
 import { MdClose } from "react-icons/md";
