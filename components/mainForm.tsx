@@ -3,8 +3,10 @@ import {
   HStack,
   Input,
   Stack,
+  Switch,
   useBoolean,
   useControllableState,
+  Text,
 } from "@chakra-ui/react";
 import { createItem } from "libs/firestore";
 import { useState } from "react";
@@ -14,6 +16,7 @@ import { MdClose } from "react-icons/md";
 export type FormDataType = {
   name: string;
   quantity: string;
+  urgent: boolean;
 };
 
 const Field = ({
@@ -77,6 +80,7 @@ const TheForm = ({
   const defaultData: FormDataType = {
     name: "",
     quantity: "",
+    urgent: false,
   };
   const [formData, setFormData] = useState(defaultData);
   const [processing, setProcessing] = useBoolean(false);
@@ -86,6 +90,7 @@ const TheForm = ({
     createItem({
       name: formData.name,
       quantity: formData.quantity,
+      urgent: formData.urgent,
     }).then(() => {
       setProcessing.off();
       setFormData({ ...defaultData });
@@ -121,37 +126,71 @@ const TheForm = ({
         <MdClose />
       </Button>
 
-      <Field
-        placeholder='Item...'
-        size='large'
-        value={formData.name}
-        onChange={v => setFormData({ ...formData, ...{ name: v } })}
-      />
-      <HStack spacing='5'>
+      <Stack spacing='5'>
+        <Field
+          placeholder='Item...'
+          size='large'
+          value={formData.name}
+          onChange={v => setFormData({ ...formData, ...{ name: v } })}
+        />
+
         <Field
           placeholder='Quantity...'
           value={formData.quantity}
           onChange={v => setFormData({ ...formData, ...{ quantity: v } })}
         />
-        <Button
-          h='10'
-          px='4'
-          pr='5'
-          bg='primary'
-          color='white'
-          _hover={{
-            bg: "primary1x",
-          }}
-          _active={{
-            bg: "primary1x",
-          }}
-          leftIcon={<GoPlus />}
-          disabled={processing}
-          onClick={submit}
-        >
-          Add
-        </Button>
-      </HStack>
+
+        <Stack direction='row' align='center' spacing='8' justify='flex-end'>
+          <Stack isInline align='center'>
+            <Text fontSize='md' fontWeight='normal'>
+              Urgent??
+            </Text>
+            <Switch
+              isChecked={formData.urgent}
+              onChange={v =>
+                setFormData({
+                  ...formData,
+                  ...{ urgent: v.currentTarget.checked },
+                })
+              }
+              size='md'
+              colorScheme='teal'
+              sx={{
+                ".chakra-switch__track": {
+                  bg: "primary2x",
+                },
+                ".chakra-switch__track[data-checked]": {
+                  bg: "primary1x",
+                },
+                ".chakra-switch__thumb": {
+                  bg: "primary1x",
+                },
+                ".chakra-switch__track[data-checked] .chakra-switch__thumb": {
+                  bg: "primary1xd",
+                },
+              }}
+            />
+          </Stack>
+          <Button
+            h='10'
+            px='4'
+            pr='5'
+            bg='primary'
+            color='white'
+            _hover={{
+              bg: "primary1x",
+            }}
+            _active={{
+              bg: "primary1x",
+            }}
+            leftIcon={<GoPlus />}
+            disabled={processing}
+            onClick={submit}
+          >
+            Add
+          </Button>
+        </Stack>
+      </Stack>
     </Stack>
   );
 };

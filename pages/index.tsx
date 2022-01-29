@@ -17,9 +17,8 @@ const Home: NextPage = () => {
           {snapshots?.map(doc => {
             return (
               <Item
+                item={doc}
                 key={doc.id}
-                name={doc.data.name}
-                quantity={doc.data.quantity}
                 onDelete={() => {
                   deleteItem(doc.id);
                 }}
