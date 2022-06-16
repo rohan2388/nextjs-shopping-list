@@ -4,7 +4,7 @@
 
 - [x] Urgency flag
 - [ ] Edit item
-- [ ] Authentication
+- [x] Authentication
 - [ ] Shere by email address
 - [ ] Item suggestion
 - [ ] Quantity suggestion

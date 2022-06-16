@@ -59,6 +59,8 @@ const styles = {
   }),
 };
 
-const theme = extendTheme({ config, colors, sizes, fonts, styles });
+const space = {};
+
+const theme = extendTheme({ config, colors, sizes, fonts, styles, space });
 // console.log(theme);
 export default theme;

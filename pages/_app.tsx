@@ -10,7 +10,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>Shopping List 📝</title>
+        <title>Shopping List</title>
       </Head>
       <ChakraProvider theme={theme}>
         <Component {...pageProps} />

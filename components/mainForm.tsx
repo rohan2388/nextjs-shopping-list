@@ -9,7 +9,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { createItem } from "libs/firestore";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { GoPlus } from "react-icons/go";
 import { MdClose } from "react-icons/md";
 
@@ -52,9 +52,9 @@ const Field = ({
       fontSize={sizes.fontSize}
       h={sizes.h}
       placeholder={placeholder}
-      borderColor='primary'
-      fontWeight='semibold'
-      variant='flushed'
+      borderColor="primary"
+      fontWeight="semibold"
+      variant="flushed"
       value={valueState}
       onChange={e => {
         setValue(e.currentTarget.value);
@@ -77,13 +77,20 @@ const TheForm = ({
   isActive?: boolean;
   onClose?: () => void;
 }): JSX.Element => {
-  const defaultData: FormDataType = {
-    name: "",
-    quantity: "",
-    urgent: false,
-  };
+  const defaultData: FormDataType = useMemo(
+    () => ({
+      name: "",
+      quantity: "",
+      urgent: false,
+    }),
+    []
+  );
   const [formData, setFormData] = useState(defaultData);
   const [processing, setProcessing] = useBoolean(false);
+
+  const resetForm = useCallback(() => {
+    setFormData({ ...defaultData });
+  }, [defaultData]);
 
   const submit = (): void => {
     setProcessing.on();
@@ -91,58 +98,62 @@ const TheForm = ({
       name: formData.name,
       quantity: formData.quantity,
       urgent: formData.urgent,
-    }).then(() => {
-      setProcessing.off();
-      setFormData({ ...defaultData });
-      if (onClose) onClose();
-    });
+    })
+      .then(() => {
+        resetForm();
+        if (onClose) onClose();
+      })
+      .catch(console.error)
+      .finally(() => {
+        setProcessing.off();
+      });
   };
 
   return (
     <Stack
-      position='fixed'
-      w='full'
-      bottom='0'
-      left='0'
-      bg='accent'
-      py='16'
-      px='5'
-      spacing='5'
+      position="fixed"
+      w="full"
+      bottom="0"
+      left="0"
+      bg="accent"
+      py="16"
+      px="5"
+      spacing="5"
       hidden={!isActive}
     >
       <Button
-        variant='unstyled'
-        alignItems='center'
-        display='flex'
-        justifyContent='center'
-        fontSize='2xl'
-        bg='transparent'
-        color='dark'
-        position='absolute'
-        top='1'
-        right='1'
+        variant="unstyled"
+        alignItems="center"
+        display="flex"
+        justifyContent="center"
+        fontSize="2xl"
+        bg="transparent"
+        color="dark"
+        position="absolute"
+        top="1"
+        right="1"
         onClick={onClose}
       >
         <MdClose />
       </Button>
 
-      <Stack spacing='5'>
+      <Stack spacing="5">
         <Field
-          placeholder='Item...'
-          size='large'
+          placeholder="Item..."
+          size="large"
           value={formData.name}
           onChange={v => setFormData({ ...formData, ...{ name: v } })}
         />
 
         <Field
-          placeholder='Quantity...'
+          placeholder="Quantity..."
           value={formData.quantity}
           onChange={v => setFormData({ ...formData, ...{ quantity: v } })}
         />
 
-        <Stack direction='row' align='center' spacing='8' justify='flex-end'>
-          <Stack isInline align='center'>
-            <Text fontSize='md' fontWeight='normal'>
+        <Stack direction="row" align="center" spacing="8" justify="flex-end">
+          <Stack isInline align="center">
+            <Text fontSize="md" fontWeight="normal">
               Urgent??
             </Text>
             <Switch
@@ -153,8 +164,8 @@ const TheForm = ({
                   ...{ urgent: v.currentTarget.checked },
                 })
               }
-              size='md'
-              colorScheme='teal'
+              size="md"
+              colorScheme="teal"
               sx={{
                 ".chakra-switch__track": {
                   bg: "primary2x",
@@ -172,11 +183,11 @@ const TheForm = ({
             />
           </Stack>
           <Button
-            h='10'
-            px='4'
-            pr='5'
-            bg='primary'
-            color='white'
+            h="10"
+            px="4"
+            pr="5"
+            bg="primary"
+            color="white"
             _hover={{
               bg: "primary1x",
             }}
@@ -202,13 +213,13 @@ const MainForm = (): JSX.Element => {
     <>
       <TheForm isActive={active} onClose={() => setActive.off()} />
       <Button
-        h='10'
-        position='fixed'
-        bottom='5'
-        right='5'
-        zIndex='sticky'
-        bg='accent'
-        color='dark'
+        h="10"
+        position="fixed"
+        bottom="5"
+        right="5"
+        zIndex="sticky"
+        bg="accent"
+        color="dark"
         _hover={{
           bg: "accent1x",
         }}
