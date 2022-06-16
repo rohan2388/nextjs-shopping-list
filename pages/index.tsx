@@ -10,7 +10,6 @@ import { useEffect } from "react";
 
 const Home: NextPage = () => {
   const { user, getResult, isLoading } = useFirebaseAuth();
-  console.log({ isLoading });
   useEffect(() => {
     (async () => {
       await getResult();
