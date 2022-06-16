@@ -1,37 +1,29 @@
 import type { NextPage } from "next";
 import Appbar from "components/appbar";
-import { Box, Stack } from "@chakra-ui/react";
-import Item from "components/item";
+import { Box } from "@chakra-ui/react";
 import MainForm from "components/mainForm";
-import { deleteItem, useShoppingList } from "libs/firestore";
+import { useFirebaseAuth } from "libs/firestore";
 import Message from "components/message";
+import List from "components/list";
+import LoginForm from "components/loginForm";
+import { useEffect } from "react";
 
 const Home: NextPage = () => {
-  const [snapshots, loading] = useShoppingList();
+  const { user, getResult, isLoading } = useFirebaseAuth();
+  console.log({ isLoading });
+  useEffect(() => {
+    (async () => {
+      await getResult();
+    })();
+  }, [getResult]);
 
   return (
     <Box>
-      <Appbar height='appbar' />
-      {!loading && (
-        <Stack spacing='none'>
-          {snapshots?.map(doc => {
-            return (
-              <Item
-                item={doc}
-                key={doc.id}
-                onDelete={() => {
-                  deleteItem(doc.id);
-                }}
-              />
-            );
-          })}
-        </Stack>
-      )}
-
-      {!loading && snapshots?.length == 0 && <Message text='Empty list' />}
-      {loading && <Message text='Loading...' />}
-
-      <MainForm />
+      {isLoading && <Message text="Initializing..." />}
+      {!isLoading && <Appbar height="appbar" />}
+      {!isLoading && user && <List />}
+      {!isLoading && user && <MainForm />}
+      {!isLoading && !user && <LoginForm />}
     </Box>
   );
 };

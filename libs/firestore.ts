@@ -12,6 +12,14 @@ import {
   getDoc,
   Timestamp,
 } from "firebase/firestore";
+import {
+  getAuth,
+  getRedirectResult,
+  GoogleAuthProvider,
+  signInWithRedirect,
+  User,
+} from "firebase/auth";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useCollection } from "react-firebase-hooks/firestore";
 
 const firebaseConfig = {
@@ -75,4 +83,66 @@ export const getItem = async (id: string) => {
 
 export const deleteItem = async (id: string) => {
   return await deleteDoc(await getItem(id));
+};
+
+export const useFirebaseAuth = function () {
+  type UserState = {
+    uid: string;
+    email: string;
+  };
+  const auth = useMemo(() => getAuth(app), []);
+  const [authUser, setAuthUser] = useState<UserState | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const formatAuthUser = useCallback(
+    (user: User) =>
+      ({
+        uid: user.uid,
+        email: user.email,
+      } as UserState),
+    []
+  );
+
+  const authStateChanged = useCallback(
+    async (authState: User | null) => {
+      setLoading(true);
+      if (!authState) {
+        setAuthUser(null);
+        setLoading(false);
+      } else {
+        setAuthUser(formatAuthUser(authState));
+        setLoading(false);
+      }
+    },
+    [formatAuthUser]
+  );
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(authStateChanged);
+    return () => unsubscribe();
+  }, [authStateChanged, auth]);
+
+  const signIn = useCallback(async () => {
+    setLoading(true);
+    const provider = new GoogleAuthProvider();
+    await signInWithRedirect(auth, provider);
+  }, [auth]);
+
+  const getResult = useCallback(async () => {
+    try {
+      const result = await getRedirectResult(auth);
+      if (result) {
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential?.accessToken;
+      }
+    } catch (error) {}
+  }, [auth]);
+
+  return {
+    user: authUser,
+    isLoading: loading,
+    singOut: () => getAuth(app).signOut(),
+    signIn,
+    getResult,
+  };
 };
