@@ -1,6 +1,8 @@
 {
-  "name": "35-nextjs-shopping-list",
+  "name": "nextjs-shopping-list",
   "private": true,
+  "version": "1.0.0",
+  "description": "A shopping list app using Next.js for my own use.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
