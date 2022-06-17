@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const path = require("path");
+const withPWA = require("next-pwa");
 
 const alias = {
   components: path.join(__dirname, "components"),
@@ -7,6 +8,10 @@ const alias = {
 };
 
 const nextConfig = {
+  pwa: {
+    dest: "public",
+    disable: process.env.NODE_ENV === "development",
+  },
   reactStrictMode: true,
   webpack(config) {
     for (const key in alias) {
@@ -16,4 +21,4 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
+module.exports = withPWA(nextConfig);
