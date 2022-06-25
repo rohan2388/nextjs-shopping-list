@@ -11,6 +11,7 @@ import {
   deleteDoc,
   getDoc,
   Timestamp,
+  enableIndexedDbPersistence,
 } from "firebase/firestore";
 import {
   getAuth,
@@ -32,8 +33,12 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-
 export const db = getFirestore(app);
+if (typeof window !== "undefined") {
+  enableIndexedDbPersistence(db).catch(err => {
+    console.log(`Firebase offline failed: ${err.code}`);
+  });
+}
 export const collectionName = "shopping-list";
 export const collectionRef = collection(db, collectionName);
 
